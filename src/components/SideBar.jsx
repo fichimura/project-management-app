@@ -1,6 +1,6 @@
 import Button from "./Button";
 
-export default function SideBar({projects, onCreateProjectClicked}){
+export default function SideBar({projects, onCreateProjectClicked, onProjectSelected}){
     return(
         <aside className="w-72 bg-indigo-900 h-screen mt-32 rounded-md">
             <div className="flex flex-row justify-between">
@@ -13,7 +13,7 @@ export default function SideBar({projects, onCreateProjectClicked}){
                 <h1 className="text-indigo-900 font-bold mb-5">Projects</h1>
                 <ul className="text-indigo-900">{projects.map(project => {
                     return <li key={project.id} className="mb-3">
-                        <Button isListItem width='w-1/3'>{project.name}</Button>
+                        <Button isListItem width='w-1/3' onClick={() => onProjectSelected(project.id)}>{project.name}</Button>
                     </li>
                 })}
                 </ul> 
