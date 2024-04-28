@@ -39,7 +39,7 @@ function App() {
     <SideBar onProjectSelected={handleSelectProject} onCreateProjectClicked={handleOnNewProjectState} projects={projects}/>
     {newProjectClicked && <NewProject onCancelClicked={handleOnNewProjectState} onCreateClicked={handleCreateProject} />}
     
-    {(projects.length === 0 || (!newProjectClicked && !selectedProject) )&& <NoProjectSelected onCreateProjectClicked={handleOnNewProjectState}/> }
+    {(projects.length === 0 && !newProjectClicked && !selectedProject) && <NoProjectSelected onCreateProjectClicked={handleOnNewProjectState}/> }
 
     {/* //TODO - THIS IS NOT SHOWING THE CORRESPONDING PROJECT WHEN CLICKED. IT STAYS STATIC IN A SINGLE PROJECT */}
     {(!newProjectClicked && selectedProject) && <SelectedProject project={selectedProject}/>}
