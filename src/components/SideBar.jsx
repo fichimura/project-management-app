@@ -8,16 +8,14 @@ export default function SideBar({projects, onCreateProjectClicked, onProjectSele
                 <Button width='w-32' onClick={onCreateProjectClicked}>+ New project</Button> 
             </div>
 
-            {projects.length > 0 && 
                 <div className="flex flex-col">
-                <h1 className="text-indigo-900 font-bold mb-5">Projects</h1>
-                <ul className="text-indigo-900">{projects.map(project => {
+                <ul className="text-indigo-900">{projects && projects.map(project => {
                     return <li key={project.id} className="mb-3">
                         <Button isListItem width='w-1/3' onClick={() => onProjectSelected(project.id)}>{project.name}</Button>
                     </li>
                 })}
                 </ul> 
-                </div>}
+                </div>
      </aside>
     );
 }
