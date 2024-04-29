@@ -11,6 +11,26 @@ function App() {
   const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState(null);
 
+  //TODO - ADD THE NEW TASK TO THE SELECTED PROJECT
+  function handleAddTask(task){
+    setProjects(prevProjects => {
+      return [
+        ...prevProjects,
+        {
+          id: uuidv4(),
+          name,
+          description,
+          dueDate,
+          tasks: []
+        }
+      ]
+    });
+  }
+
+  function handleDeleteTask(){
+
+  }
+
   function handleOnNewProjectState() {
     setNewProjectClicked(prevProjectState => !prevProjectState);
   }
@@ -23,7 +43,8 @@ function App() {
           id: uuidv4(),
           name,
           description,
-          dueDate
+          dueDate,
+          tasks: []
         }
       ]
     });
@@ -36,28 +57,26 @@ function App() {
   }
 
   function handleDeleteProject(projectId){
-    setProjects(prevProjects => {
-      console.log('prev',prevProjects);
-
-      //TODO - FIX THIS FILTER. AT THE MOMENT ITS REMOVING ALL THE ITEMS IN THE ARRAY
-      return prevProjects.filter((project) =>{
-        project.id !== projectId;
-      });
-    });
-
     setSelectedProject(null);
+
+    const previousProjects = [...projects];
+    previousProjects.splice(projectId, 1);
+    setProjects(previousProjects);
   }
 
 
   return (
     <main className="flex flex-row">
-    <SideBar onProjectSelected={handleSelectProject} onCreateProjectClicked={handleOnNewProjectState} projects={projects}/>
-    {newProjectClicked && <NewProject onCancelClicked={handleOnNewProjectState} onCreateClicked={handleCreateProject} />}
-    
-    {(!newProjectClicked && !selectedProject) && <NoProjectSelected onCreateProjectClicked={handleOnNewProjectState}/> }
+      <SideBar onProjectSelected={handleSelectProject} onCreateProjectClicked={handleOnNewProjectState} projects={projects}/>
 
-    {/* //TODO - THIS IS NOT SHOWING THE CORRESPONDING PROJECT WHEN CLICKED. IT STAYS STATIC IN A SINGLE PROJECT */}
-    {(!newProjectClicked && selectedProject) && <SelectedProject project={selectedProject} onDeleteProject={handleDeleteProject}/>}
+      <section className="flex justify-center w-2/3">
+        {newProjectClicked && <NewProject onCancelClicked={handleOnNewProjectState} onCreateClicked={handleCreateProject} />}
+        
+        {(!newProjectClicked && !selectedProject) && <NoProjectSelected onCreateProjectClicked={handleOnNewProjectState}/> }
+
+        {/* //TODO - THIS IS NOT SHOWING THE CORRESPONDING PROJECT WHEN CLICKED. IT STAYS STATIC IN A SINGLE PROJECT */}
+        {(!newProjectClicked && selectedProject) && <SelectedProject project={selectedProject} onDeleteProject={handleDeleteProject} onAddTask={handleAddTask} onDeleteAddTask={handleDeleteTask}/>}
+      </section>
     </main>
   )
 }
