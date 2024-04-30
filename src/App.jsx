@@ -12,19 +12,22 @@ function App() {
   const [selectedProject, setSelectedProject] = useState(null);
 
   //TODO - ADD THE NEW TASK TO THE SELECTED PROJECT
-  function handleAddTask(task){
+  function handleAddTask(projectId, taskToAdd){
     setProjects(prevProjects => {
-      return [
-        ...prevProjects,
-        {
-          id: uuidv4(),
-          name,
-          description,
-          dueDate,
-          tasks: []
-        }
-      ]
-    });
+        const finalProjects = [];
+        prevProjects.map(project => {
+          if( project === projectId ){
+            if(project.tasks){
+              finalProjects.concat({...project, project.tasks.concat(taskToAdd)});
+            }else{
+              finalProjects.concat({...project, task: [taskToAdd]});
+            }
+          }
+        });
+
+       return finalProjects;
+      }
+    );
   }
 
   function handleDeleteTask(){
@@ -38,14 +41,7 @@ function App() {
   function handleCreateProject(name, description, dueDate){
     setProjects(prevProjects => {
       return [
-        ...prevProjects,
-        {
-          id: uuidv4(),
-          name,
-          description,
-          dueDate,
-          tasks: []
-        }
+        ...prevProjects, {id: uuidv4(), name, description, dueDate}
       ]
     });
 
@@ -53,14 +49,14 @@ function App() {
   }
 
   function handleSelectProject(projectId){
-    setSelectedProject(projects.find( project => project.id === projectId));
+    setSelectedProject(projects.find(project => project.id === projectId));
   }
 
   function handleDeleteProject(projectId){
     setSelectedProject(null);
 
     const previousProjects = [...projects];
-    previousProjects.splice(projectId, 1);
+    previousProjects.projects.splice(projectId, 1);
     setProjects(previousProjects);
   }
 
@@ -74,7 +70,6 @@ function App() {
         
         {(!newProjectClicked && !selectedProject) && <NoProjectSelected onCreateProjectClicked={handleOnNewProjectState}/> }
 
-        {/* //TODO - THIS IS NOT SHOWING THE CORRESPONDING PROJECT WHEN CLICKED. IT STAYS STATIC IN A SINGLE PROJECT */}
         {(!newProjectClicked && selectedProject) && <SelectedProject project={selectedProject} onDeleteProject={handleDeleteProject} onAddTask={handleAddTask} onDeleteAddTask={handleDeleteTask}/>}
       </section>
     </main>
