@@ -1,8 +1,10 @@
-import { useState } from "react";
-import Button from "./Button";
+import { useState, useRef } from "react";
 import { v4 as uuidv4 } from 'uuid';
+import Button from "./Button";
+import Modal from "./Modal";
 
 export default function NewTask({project, onAdd, onCancel }){
+    const modal = useRef();
     const [task, setTask] = useState('');
     
     function handleTaskChange(evt){
@@ -10,16 +12,27 @@ export default function NewTask({project, onAdd, onCancel }){
     }
 
     function handleNewTaskClicked(){
-        const taskToAdd = {
-            id:uuidv4(),
-            task
+        if(task.trim() === ''){
+            modal.current.open();
+        }else{
+            const taskToAdd = {
+                id: uuidv4(),
+                projectId: project.id,
+                text: task
+            }
+            onAdd(project.id, taskToAdd);
+            setTask('');
+            onCancel();
         }
-        onAdd(project.id, taskToAdd);
-        setTask('');
     }
 
     return(
         <>
+            <Modal className="backdrop: p-28" ref={modal} buttonText='Close' >
+                <h1 className="font-bold text-xl text-indigo-900 py-5">Error during the creation of the project</h1>
+                <p className="text-lg text-indigo-900 py-5">It looks like you forgot to fill one of the fields</p>
+            </Modal>
+
             <div className="flex items-center gap-4">
                 <label>Add task:</label>
                 <input onChange={handleTaskChange} type="text" className="w-72 px-4 py-2 rounded-md bg-indigo-200" />
