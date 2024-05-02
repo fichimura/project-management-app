@@ -5,33 +5,33 @@ import SideBar from "./components/SideBar"
 import NoProjectSelected from "./components/NoProjectSelected";
 import SelectedProject from "./components/SelectedProject";
 
-
 function App() {
   const [newProjectClicked, setNewProjectClicked] = useState(false);
-  const [projects, setProjects] = useState([]);
+  const [projects, setProjects] = useState({
+    projects: [],
+    tasks: []
+  });
   const [selectedProject, setSelectedProject] = useState(null);
 
-  //TODO - ADD THE NEW TASK TO THE SELECTED PROJECT
   function handleAddTask(projectId, taskToAdd){
     setProjects(prevProjects => {
-        const finalProjects = [];
-        prevProjects.map(project => {
-          if( project === projectId ){
-            if(project.tasks){
-              finalProjects.concat({...project, project.tasks.concat(taskToAdd)});
-            }else{
-              finalProjects.concat({...project, task: [taskToAdd]});
-            }
-          }
-        });
-
-       return finalProjects;
+        return {
+          projects: [...prevProjects.projects],
+          tasks: prevProjects.tasks ? [...prevProjects.tasks, taskToAdd] : [taskToAdd]
+        }
       }
     );
   }
+  
+  function handleDeleteTask(taskId){
+    setProjects(prevProjects => {
+      const projectsWithElementRemoved ={
+        projects: [...prevProjects.projects],
+        tasks: prevProjects.tasks.splice(taskId, 1)
+      };
 
-  function handleDeleteTask(){
-
+    return projectsWithElementRemoved;
+    });
   }
 
   function handleOnNewProjectState() {
@@ -40,26 +40,35 @@ function App() {
   
   function handleCreateProject(name, description, dueDate){
     setProjects(prevProjects => {
-      return [
-        ...prevProjects, {id: uuidv4(), name, description, dueDate}
-      ]
+      return {
+        projects: [...prevProjects.projects, {id: uuidv4(), name, description, dueDate}],
+        tasks: prevProjects.tasks ? [...prevProjects.tasks] : []
+      } 
     });
 
     handleOnNewProjectState();
   }
 
-  function handleSelectProject(projectId){
-    setSelectedProject(projects.find(project => project.id === projectId));
-  }
-
   function handleDeleteProject(projectId){
     setSelectedProject(null);
 
-    const previousProjects = [...projects];
-    previousProjects.projects.splice(projectId, 1);
-    setProjects(previousProjects);
+    setProjects(prevProjects => {
+      const projectsWithElementRemoved ={
+          projects: prevProjects.projects.splice(projectId, 1),
+          tasks: prevProjects.tasks ? [...prevProjects.tasks] : []
+        };
+
+      return projectsWithElementRemoved;
+    });
   }
 
+
+  function handleSelectProject(projectId){
+    if(newProjectClicked){
+      handleOnNewProjectState();
+    }
+    setSelectedProject(projects.projects.find(project => project.id === projectId));
+  }
 
   return (
     <main className="flex flex-row">
@@ -70,7 +79,7 @@ function App() {
         
         {(!newProjectClicked && !selectedProject) && <NoProjectSelected onCreateProjectClicked={handleOnNewProjectState}/> }
 
-        {(!newProjectClicked && selectedProject) && <SelectedProject project={selectedProject} onDeleteProject={handleDeleteProject} onAddTask={handleAddTask} onDeleteAddTask={handleDeleteTask}/>}
+        {(!newProjectClicked && selectedProject) && <SelectedProject project={selectedProject} tasks={projects.tasks} onDeleteProject={handleDeleteProject} onAddTask={handleAddTask} onDeleteTask={handleDeleteTask}/>}
       </section>
     </main>
   )
