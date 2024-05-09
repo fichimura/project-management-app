@@ -1,9 +1,12 @@
-import { useRef } from "react"
+import { useRef, useContext } from "react"
+import { ProjectContext } from "../store/project-store-context";
 import Button from "./Button"
 import LabelInputFields from "./LabelInputFields"
 import Modal from "./Modal";
 
-export default function NewProject({onCancelClicked, onCreateClicked}){
+export default function NewProject(){
+    const {handleOnNewProjectState, handleCreateProject} = useContext(ProjectContext);
+
     const modal = useRef();
     const nameField  = useRef();
     const descriptionField  = useRef();
@@ -27,13 +30,13 @@ export default function NewProject({onCancelClicked, onCreateClicked}){
                             if(nameField.current.value.trim() === '' || descriptionField.current.value.trim() === '' || dueDateField.current.value.trim() === ''){
                                 modal.current.open();
                             }else{     
-                                onCreateClicked(nameField.current.value, descriptionField.current.value, dueDateField.current.value)
+                                handleCreateProject(nameField.current.value, descriptionField.current.value, dueDateField.current.value)
                             }
                         }
                     }>
                         Create
                     </Button>
-                    <Button width='w-48' onClick={onCancelClicked}>Cancel</Button>
+                    <Button width='w-48' onClick={handleOnNewProjectState}>Cancel</Button>
                 </div>
             </div>
         </>
