@@ -1,9 +1,12 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useContext } from "react";
+import { ProjectContext } from "../store/project-store-context";
 import { v4 as uuidv4 } from 'uuid';
 import Button from "./Button";
 import Modal from "./Modal";
 
-export default function NewTask({project, onAdd, onCancel }){
+export default function NewTask({onCancel}){
+    const {projects, handleAddTask} = useContext(ProjectContext);
+    
     const modal = useRef();
     const [task, setTask] = useState('');
     
@@ -17,10 +20,11 @@ export default function NewTask({project, onAdd, onCancel }){
         }else{
             const taskToAdd = {
                 id: uuidv4(),
-                projectId: project.id,
+                projectId: projects.selectedProject,
                 text: task
             }
-            onAdd(project.id, taskToAdd);
+
+            handleAddTask(taskToAdd);
             setTask('');
             onCancel();
         }
